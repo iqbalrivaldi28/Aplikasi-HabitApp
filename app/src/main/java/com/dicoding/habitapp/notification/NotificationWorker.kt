@@ -33,13 +33,13 @@ class NotificationWorker(private val ctx: Context, params: WorkerParameters) : W
         //TODO 12 : If notification preference on, show notification with pending intent
         if (shouldNotify)
         {
-            showNotification(ctx)
+            notifOn(ctx)
         }
 
         return Result.success()
     }
 
-    private fun getPendingIntent(id: Int): PendingIntent? {
+    private fun pendingIntent(id: Int): PendingIntent? {
         val pendingIntent = Intent(applicationContext, DetailHabitActivity::class.java).apply {
             putExtra(HABIT_ID, id)
         }
@@ -48,13 +48,14 @@ class NotificationWorker(private val ctx: Context, params: WorkerParameters) : W
             addNextIntentWithParentStack(pendingIntent)
             getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
         }
+
     }
 
-    private fun showNotification(context: Context) {
+    private fun notifOn(context: Context) {
         val habitTitle = habitTitle
         val notifIntent = Intent(context, HabitListActivity::class.java)
         val msg = context.getString(R.string.notify_content)
-        val pendingIntent : PendingIntent? = getPendingIntent(habitId)
+        val pendingIntent : PendingIntent? = pendingIntent(habitId)
         val managerCompat = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notificationSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
@@ -83,13 +84,17 @@ class NotificationWorker(private val ctx: Context, params: WorkerParameters) : W
 
             channel.enableVibration(true)
             channel.vibrationPattern = longArrayOf(1000,1000,1000,1000,1000)
+
             builder.setChannelId(NOTIFICATION_CHANNEL_ID)
             managerCompat.createNotificationChannel(channel)
+
         }
 
         builder.setAutoCancel(true)
+
         val notification = builder.build()
         notification.flags = Notification.FLAG_AUTO_CANCEL or Notification.FLAG_ONGOING_EVENT
         managerCompat.notify(101, notification)
     }
+
 }

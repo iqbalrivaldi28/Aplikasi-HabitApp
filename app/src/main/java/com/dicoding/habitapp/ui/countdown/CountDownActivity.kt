@@ -40,6 +40,7 @@ class CountDownActivity : AppCompatActivity() {
         //TODO 13 : Start and cancel One Time Request WorkManager to notify when time is up.
         viewModel.eventCountDownFinish.observe(this) { state ->
             updateButtonState(state)
+
         }
 
         findViewById<Button>(R.id.btn_start).setOnClickListener {
@@ -49,9 +50,10 @@ class CountDownActivity : AppCompatActivity() {
             viewModel.startTimer()
             updateButtonState(false)
 
-            val notify: WorkRequest =
-                OneTimeWorkRequestBuilder<NotificationWorker>().setInputData(habitData)
-                    .setInitialDelay(time!!, TimeUnit.MILLISECONDS).build()
+            val notify: WorkRequest = OneTimeWorkRequestBuilder<NotificationWorker>()
+                .setInputData(habitData)
+                .setInitialDelay(time!!, TimeUnit.MILLISECONDS)
+                .build()
             WorkManager.getInstance(this).enqueue(notify)
 
         }

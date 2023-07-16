@@ -42,6 +42,7 @@ class HabitListActivity : AppCompatActivity() {
         //TODO 6 : Initiate RecyclerView with LayoutManager
         recycler = findViewById(R.id.rv_habit)
         recycler.setHasFixedSize(true)
+
         recycler.layoutManager = GridLayoutManager(this, 2)
 
         initAction()
@@ -52,13 +53,14 @@ class HabitListActivity : AppCompatActivity() {
         //TODO 7 : Submit pagedList to adapter and add intent to detail
         viewModel.habits.observe(this) {
             val adapter = HabitAdapter { habit ->
-                val intent = Intent(this, DetailHabitActivity::class.java)
-                intent.putExtra(HABIT_ID, habit.id)
-                startActivity(intent)
+                val i = Intent(this, DetailHabitActivity::class.java)
+                i.putExtra(HABIT_ID, habit.id)
+                startActivity(i)
             }
 
             adapter.submitList(it)
             recycler.adapter = adapter
+
         }
         viewModel.snackbarText.observe(this) {
             showSnackBar(it)
@@ -69,13 +71,10 @@ class HabitListActivity : AppCompatActivity() {
     //TODO 15 : Fixing bug : Menu not show and SnackBar not show when list is deleted using swipe
     private fun showSnackBar(eventMessage: Event<Int>) {
         val msg = eventMessage.getContentIfNotHandled() ?: return
-        Snackbar.make(
-            findViewById(R.id.coordinator_layout),
-            getString(msg),
-            Snackbar.LENGTH_SHORT
-        ).setAction("Undo"){
+        Snackbar.make(findViewById(R.id.coordinator_layout), getString(msg), Snackbar.LENGTH_SHORT).setAction("Undo"){
             viewModel.insert(viewModel.undo.value?.getContentIfNotHandled() as Habit)
         }.show()
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -141,7 +140,9 @@ class HabitListActivity : AppCompatActivity() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val habit = (viewHolder as HabitAdapter.HabitViewHolder).getHabit
-                viewModel.deleteHabit(habit)
+                    viewModel.deleteHabit(habit)
+
+
             }
 
         })

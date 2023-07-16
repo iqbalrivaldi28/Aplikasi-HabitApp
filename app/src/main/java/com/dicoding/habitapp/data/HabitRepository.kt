@@ -59,5 +59,8 @@ class HabitRepository(private val habitDao: HabitDao, private val executor: Exec
     }
 
     fun getRandomHabitByPriorityLevel(level: String): LiveData<Habit> {
-        return habitDao.getRandomHabitByPriorityLevel(level) }
+        return habitDao.getRandomHabitByPriorityLevel(level)
+
+    }
+
 }

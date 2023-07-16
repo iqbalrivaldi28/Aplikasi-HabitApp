@@ -19,4 +19,5 @@ data class Habit(
     val startTime: String,
 
     val priorityLevel: String
+
 ): Parcelable
